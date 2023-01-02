@@ -52,3 +52,10 @@ def input_users(user: UserLogin, db:Session=Depends(get_db)):
     except:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)    
     
+@router.get("/users/{id}/pengeluaran", tags=["users"])
+async def get_users_by_id(id:int, db:Session=Depends(get_db)):
+    return db.execute("SELECT nama, tanggal, jumlah, pembayaran FROM pengeluaran WHERE user_id = %s" %id).fetchall()
+
+@router.get("/users/{id}/pengeluaran/{tanggal}", tags=["users"])
+async def get_users_by_id(id:int, tanggal:int, db:Session=Depends(get_db)):
+    return db.execute("SELECT nama, tanggal, jumlah, pembayaran FROM pengeluaran WHERE user_id = %s && tanggal ='%s'" %(id, tanggal)).fetchall()
