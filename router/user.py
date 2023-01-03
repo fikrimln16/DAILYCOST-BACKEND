@@ -4,8 +4,9 @@ from sqlalchemy.orm import Session
 from typing import List
 from schemas.User import UserSchema
 from schemas.UserLogin import UserLogin
+from schemas.Depo import Depo
 from datetime import datetime
-from pytz import timezone
+# from pytz import timezone
 from models import Users
 
 
@@ -29,7 +30,7 @@ async def get_users_by_id(id:int, db:Session=Depends(get_db)):
 
 
 @router.post("/users", response_model=UserSchema, tags=["users"], status_code=status.HTTP_201_CREATED)
-def input_users(user: UserSchema, db:Session=Depends(get_db)):
+async def input_users(user: UserSchema, db:Session=Depends(get_db)):
     u = Users(
         nama = user.nama,
         email = user.email,
@@ -51,6 +52,21 @@ def input_users(user: UserLogin, db:Session=Depends(get_db)):
             return {"user_id" : user_id}
     except:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)    
+
+@router.post("/users/newdepo", tags=["users"])
+async def depo_uang(depo: Depo,db:Session=Depends(get_db)):
+    query = "INSERT INTO tabungan VALUES (%d, %d, %d, %d)"%(depo.user_id, depo.uang_gopay, depo.uang_cash, depo.uang_rekening)
+    try:
+        db.execute(query)
+        db.commit()
+        return {
+            "user_id" : depo.user_id,
+            "uang_gopay" : depo.uang_gopay,
+            "uang_cash" : depo.uang_cash,
+            "uang_rekening" : depo.uang_rekening
+        }
+    except:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT)
     
 @router.get("/users/{id}/pengeluaran", tags=["users"])
 async def get_users_by_id(id:int, db:Session=Depends(get_db)):
