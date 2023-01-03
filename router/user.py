@@ -73,5 +73,5 @@ async def get_users_by_id(id:int, db:Session=Depends(get_db)):
     return db.execute("SELECT nama, tanggal, jumlah, pembayaran FROM pengeluaran WHERE user_id = %s" %id).fetchall()
 
 @router.get("/users/{id}/pengeluaran/{tanggal}", tags=["users"])
-async def get_users_by_id(id:int, tanggal:int, db:Session=Depends(get_db)):
-    return db.execute("SELECT nama, tanggal, jumlah, pembayaran FROM pengeluaran WHERE user_id = %s && tanggal ='%s'" %(id, tanggal)).fetchall()
+async def get_users_by_id(id:int, tanggal:str, db:Session=Depends(get_db)):
+    return db.execute("SELECT nama, tanggal, jumlah, pembayaran FROM pengeluaran WHERE user_id = %s && tanggal BETWEEN '%s 00:00:00' AND '%s 23:59:59'" %(id, tanggal, tanggal)).fetchall()
