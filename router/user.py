@@ -5,6 +5,7 @@ from typing import List
 from schemas.User import UserSchema
 from schemas.UserLogin import UserLogin
 from schemas.Depo import Depo
+from schemas.Email import Email
 from datetime import datetime
 # from pytz import timezone
 from models import Users
@@ -22,6 +23,15 @@ def get_db():
 @router.get("/users", tags=["users"])
 async def get_total_users(db:Session=Depends(get_db)):
     return db.execute("SELECT * FROM user").all()
+
+@router.post("/users/email", tags=["users"])
+async def get_user_by_email(email: Email, db:Session=Depends(get_db)):
+    query = db.execute("SELECT user_id FROM user WHERE email = '%s'"%email.email).fetchone()
+    try:
+        for hasil in query:
+            return {"user_id" : hasil}
+    except:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND) 
     
 
 @router.get("/users/{id}", tags=["users"])
@@ -42,6 +52,8 @@ async def input_users(user: UserSchema, db:Session=Depends(get_db)):
         return u
     except:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT)
+
+
 
 @router.post("/users/login", tags=["users"], status_code=status.HTTP_201_CREATED)
 def input_users(user: UserLogin, db:Session=Depends(get_db)):
