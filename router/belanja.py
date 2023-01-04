@@ -35,7 +35,7 @@ async def get_total_users(belanja:Belanja, db:Session=Depends(get_db)):
             uang_rekening = hasil[2]
             if belanja.pembayaran == 'GOPAY':
                 uang_gopay_update = uang_gopay - belanja.jumlah
-                db.execute("UPDATE tabungan SET uang_cash = %d WHERE user_id = %d"%(uang_gopay_update, belanja.user_id))
+                db.execute("UPDATE tabungan SET uang_gopay = %d WHERE user_id = %d"%(uang_gopay_update, belanja.user_id))
                 db.commit()
             elif belanja.pembayaran == 'REKENING':
                 uang_rekening_update = uang_rekening - belanja.jumlah
