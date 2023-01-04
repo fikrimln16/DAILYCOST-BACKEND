@@ -38,6 +38,10 @@ async def get_user_by_email(email: Email, db:Session=Depends(get_db)):
 async def get_users_by_id(id:int, db:Session=Depends(get_db)):
     return db.execute("SELECT * FROM user WHERE user_id = %s" %id).fetchall()
 
+@router.get("/users/saldo/{id}", tags=["users"])
+async def get_users_by_id(id:int, db:Session=Depends(get_db)):
+    return db.execute("SELECT uang_gopay, uang_cash, uang_rekening FROM tabungan WHERE user_id = %s" %id).fetchall()
+
 
 @router.post("/users", response_model=UserSchema, tags=["users"], status_code=status.HTTP_201_CREATED)
 async def input_users(user: UserSchema, db:Session=Depends(get_db)):
