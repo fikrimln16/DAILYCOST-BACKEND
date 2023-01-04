@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from database import Base, SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
-from router import user
+from router import user, belanja
 
 import uvicorn
 
@@ -28,4 +28,4 @@ def get_db():
         db.close()
 
 app.include_router(user.router)
-
+app.include_router(belanja.router)
